@@ -360,6 +360,16 @@ function updateFiltersMeta(shown, total) {
 }
 
 function bindHouseRoomEvents(casaKey) {
+  document.querySelectorAll(`#acc-${casaKey}-body .house-hero`).forEach(el => {
+    const handler = () => {
+      let gallery = [];
+      try { gallery = JSON.parse(decodeURIComponent(el.dataset.gallery || '[]')); } catch (_) {}
+      openLightbox(gallery, decodeURIComponent(el.dataset.name || ''));
+    };
+    el.addEventListener('click', handler);
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handler(); } });
+  });
+
   document.querySelectorAll(`#acc-${casaKey}-body .room-img-wrap`).forEach(el => {
     if (el.classList.contains('no-photo')) return;
     const getGallery = () => {
@@ -452,6 +462,22 @@ function reorderHouses(countByKey) {
   syncAccordionAria();
 }
 
+
+const HOUSE_COMUNES = {
+  xalisco: { src: 'photos/casa-xalisco-areas-1.jpg', label: 'Rooftop', alt: 'Rooftop Casa Xalisco' },
+  quetzal: { src: 'photos/casa-quetzal-areas-1.jpg', label: 'Sala de cine', alt: 'Sala de cine Casa Quetzal' }
+};
+
+function houseHeroHtml(casaKey) {
+  const hero = HOUSE_COMUNES[casaKey];
+  if (!hero) return '';
+  const galleryJson = encodeURIComponent(JSON.stringify([hero.src]));
+  return `<div class="house-hero" data-gallery="${galleryJson}" data-name="${encodeURIComponent(hero.alt)}" role="button" tabindex="0" aria-label="${hero.alt}">
+    <img class="house-hero-img" src="${hero.src}" alt="${hero.alt}">
+    <span class="house-hero-label">${hero.label}</span>
+  </div>`;
+}
+
 function renderFromCache() {
   let totalRooms = 0;
   let shownRooms = 0;
@@ -485,7 +511,7 @@ function renderFromCache() {
     const h = publicCache.houseByKey[casaKey] || {};
     const filteredArr = filteredByKey[casaKey] || [];
     const bodyEl = document.getElementById(`acc-${casaKey}-body`);
-    if (bodyEl) bodyEl.innerHTML = renderCards(filteredArr, casaKey, h);
+    if (bodyEl) bodyEl.innerHTML = houseHeroHtml(casaKey) + renderCards(filteredArr, casaKey, h);
     bindHouseRoomEvents(casaKey);
   });
 
@@ -743,8 +769,8 @@ async function renderPublic() {
   }
 
   const defaultHouses = {
-    xalisco: { name:'Casa Xalisco', address:'Guadalupe Zuno 2024, Col. Americana', driveLink:'https://tinyurl.com/fotosxalisco', mapLink:'https://maps.app.goo.gl/ciinzH5bD1tSLWNM8' },
-    quetzal: { name:'Casa Quetzal', address:'Niños Héroes 1771-A, Col. Moderna',   driveLink:'https://drive.google.com/drive/folders/1fyMS2cqq621lf4IicUx-9YYmgXrsH6CH', mapLink:'https://maps.app.goo.gl/cC98RbSXkGifkMSF6' }
+    xalisco: { name:'Casa Xalisco', address:'Guadalupe Zuno 2024, Col. Americana', driveLink:'https://drive.google.com/drive/folders/1jlR_iYsdsExH5cWanUSvXWCoe37yXtup', mapLink:'https://maps.app.goo.gl/ciinzH5bD1tSLWNM8' },
+    quetzal: { name:'Casa Quetzal', address:'Niños Héroes 1771-A, Col. Moderna',   driveLink:'https://drive.google.com/drive/folders/1X36X0SlElaouR19YPnOTyG1fdr5G7_Qd', mapLink:'https://maps.app.goo.gl/cC98RbSXkGifkMSF6' }
   };
   const pubH  = (data.cuartosHouses && typeof data.cuartosHouses === 'object') ? data.cuartosHouses : {};
   const protH = (data.houses        && typeof data.houses        === 'object') ? data.houses        : {};
