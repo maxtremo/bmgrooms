@@ -50,9 +50,9 @@
     s.textContent = [
       '.bmg-img-wrap,.room-img-wrap{position:relative}',
       '.bmg-gallery-thumbs{display:flex;gap:6px;padding:8px 10px 0;position:absolute;left:0;right:0;bottom:8px;z-index:2;pointer-events:auto}',
-      '.bmg-gallery-thumb{width:44px;height:32px;padding:0;border:2px solid #fff;border-radius:6px;overflow:hidden;opacity:.72;cursor:pointer;background:#fff;box-shadow:0 1px 4px rgba(38,42,69,.35)}',
+      '.bmg-gallery-thumb{flex:0 0 44px;width:44px!important;min-width:44px;height:32px!important;min-height:32px;padding:0!important;border:2px solid #fff!important;border-radius:6px;overflow:hidden;opacity:.72;cursor:pointer;background:#fff center/cover no-repeat;box-shadow:0 1px 4px rgba(38,42,69,.35);appearance:none;-webkit-appearance:none}',
       '.bmg-gallery-thumb.is-active,.bmg-gallery-thumb:hover{opacity:1}',
-      '.bmg-gallery-thumb img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}',
+      '.bmg-gallery-thumb img{width:44px!important;height:32px!important;max-width:none!important;object-fit:cover;display:block!important;pointer-events:none}',
       '#bmg-lb{display:none;position:fixed;inset:0;background:rgba(10,10,20,.88);z-index:10050;align-items:center;justify-content:center;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}',
       '#bmg-lb.is-open{display:flex}',
       '#bmg-lb .bmg-lb-wrap{position:relative;max-width:90vw;max-height:88vh}',
@@ -312,6 +312,7 @@
       thumb.src = url;
       thumb.alt = '';
       thumb.referrerPolicy = 'no-referrer';
+      btn.style.backgroundImage = 'url(' + url + ')';
       btn.appendChild(thumb);
       btn.addEventListener('click', function (e) {
         e.preventDefault();
