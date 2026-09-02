@@ -375,7 +375,13 @@ function bindHouseRoomEvents(casaKey) {
     const getGallery = () => {
       try { return JSON.parse(decodeURIComponent(el.dataset.gallery || '[]')); } catch (_) { return []; }
     };
-    const handler = () => openLightbox(getGallery(), decodeURIComponent(el.dataset.name));
+    const handler = () => {
+      const gallery = getGallery();
+      const current = (el.querySelector('.room-img') || {}).src || '';
+      let start = gallery.findIndex(url => url === current || current.endsWith(url));
+      if (start < 0) start = 0;
+      openLightbox(gallery, decodeURIComponent(el.dataset.name), start);
+    };
     el.addEventListener('click', handler);
     el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') handler(); });
     el.querySelectorAll('.room-gallery-thumb').forEach((thumb) => {
@@ -832,13 +838,49 @@ const lightbox    = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightbox-img');
 const lightboxName= document.getElementById('lightbox-name');
 const lightboxCloseBtn = document.getElementById('lightbox-close');
+const lightboxPrevBtn = document.getElementById('lightbox-prev');
+const lightboxNextBtn = document.getElementById('lightbox-next');
+const lightboxThumbs = document.getElementById('lightbox-thumbs');
 let lightboxLastFocus = null;
+let lightboxGallery = [];
+let lightboxIndex = 0;
+let lightboxTitle = '';
 
-function openLightbox(images, name) {
-  const gallery = Array.isArray(images) && images.length ? images : [''];
+function renderLightbox() {
+  const gallery = lightboxGallery;
+  const total = gallery.length;
+  const src = gallery[lightboxIndex] || '';
+  lightboxImg.src = src;
+  lightboxImg.alt = lightboxTitle;
+  lightboxName.textContent = total > 1
+    ? `${lightboxTitle} · ${lightboxIndex + 1} / ${total}`
+    : lightboxTitle;
+  const many = total > 1;
+  if (lightboxPrevBtn) lightboxPrevBtn.hidden = !many;
+  if (lightboxNextBtn) lightboxNextBtn.hidden = !many;
+  if (lightboxThumbs) {
+    lightboxThumbs.hidden = !many;
+    lightboxThumbs.innerHTML = many ? gallery.map((url, i) =>
+      `<button type="button" class="lightbox-thumb${i === lightboxIndex ? ' is-active' : ''}" data-index="${i}" aria-label="Foto ${i + 1}"><img src="${url}" alt=""></button>`
+    ).join('') : '';
+  }
+}
+
+function lightboxStep(delta) {
+  const total = lightboxGallery.length;
+  if (total < 2) return;
+  lightboxIndex = (lightboxIndex + delta + total) % total;
+  renderLightbox();
+}
+
+function openLightbox(images, name, startIndex) {
+  lightboxGallery = Array.isArray(images) ? images.filter(Boolean) : [];
+  if (!lightboxGallery.length) return;
+  const start = Number(startIndex);
+  lightboxIndex = Number.isFinite(start) && start >= 0 && start < lightboxGallery.length ? start : 0;
+  lightboxTitle = name || '';
   lightboxLastFocus = document.activeElement;
-  lightboxImg.src = gallery[0];
-  lightboxName.textContent = name;
+  renderLightbox();
   lightbox.classList.add('active');
   lightbox.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
@@ -848,15 +890,33 @@ function closeLightbox() {
   lightbox.classList.remove('active');
   lightbox.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
-  setTimeout(() => { lightboxImg.src = ''; }, 300);
+  lightboxGallery = [];
+  lightboxIndex = 0;
+  setTimeout(() => { lightboxImg.src = ''; if (lightboxThumbs) lightboxThumbs.innerHTML = ''; }, 300);
   if (lightboxLastFocus && lightboxLastFocus.focus) {
     try { lightboxLastFocus.focus(); } catch (_) {}
   }
 }
 
 if (lightboxCloseBtn) lightboxCloseBtn.addEventListener('click', closeLightbox);
+if (lightboxPrevBtn) lightboxPrevBtn.addEventListener('click', e => { e.stopPropagation(); lightboxStep(-1); });
+if (lightboxNextBtn) lightboxNextBtn.addEventListener('click', e => { e.stopPropagation(); lightboxStep(1); });
+if (lightboxThumbs) {
+  lightboxThumbs.addEventListener('click', e => {
+    const btn = e.target.closest('.lightbox-thumb');
+    if (!btn) return;
+    e.stopPropagation();
+    lightboxIndex = Number(btn.dataset.index) || 0;
+    renderLightbox();
+  });
+}
 lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
-document.addEventListener('keydown', e => { if (e.key==='Escape') closeLightbox(); });
+document.addEventListener('keydown', e => {
+  if (!lightbox.classList.contains('active')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') { e.preventDefault(); lightboxStep(-1); }
+  if (e.key === 'ArrowRight') { e.preventDefault(); lightboxStep(1); }
+});
 
 /* ══════════════════════════════════════════
    Pre-Consulta Modal
