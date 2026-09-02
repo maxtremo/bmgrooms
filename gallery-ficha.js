@@ -57,12 +57,14 @@
       '#bmg-lb.is-open{display:flex}',
       '#bmg-lb .bmg-lb-wrap{position:relative;max-width:90vw;max-height:88vh}',
       '#bmg-lb .bmg-lb-img{display:block;max-width:90vw;max-height:85vh;border-radius:12px;box-shadow:0 24px 80px rgba(0,0,0,.55);object-fit:contain}',
-      '#bmg-lb .bmg-lb-close{position:absolute;top:-14px;right:-14px;width:36px;height:36px;background:#fff;border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.25)}',
-      '#bmg-lb .bmg-lb-close svg{width:16px;height:16px}',
+      '#bmg-lb button.bmg-lb-nav,#bmg-lb button.bmg-lb-close{all:unset;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;max-width:44px!important;padding:0!important;margin:0 10px!important;border:0!important;border-radius:50%!important;background:#fff!important;color:#1E1B4B!important;font:700 28px/1 Nunito,system-ui,sans-serif!important;text-align:center!important;cursor:pointer!important;box-shadow:0 4px 14px rgba(0,0,0,.25)!important;z-index:3}',
+      '#bmg-lb button.bmg-lb-close{position:absolute!important;top:8px!important;right:8px!important;width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;max-width:36px!important;margin:0!important;font-size:26px!important}',
+      '#bmg-lb button svg{display:none!important}',
+      '#bmg-lb .bmg-lb-prev::before{content:"\\2039"}',
+      '#bmg-lb .bmg-lb-next::before{content:"\\203A"}',
+      '#bmg-lb .bmg-lb-close::before{content:"\\00D7"}',
       '#bmg-lb .bmg-lb-name{margin-top:10px;text-align:center;color:rgba(255,255,255,.75);font-size:13px;font-weight:700;white-space:nowrap}',
-      '#bmg-lb .bmg-lb-nav{flex-shrink:0;width:44px;height:44px;margin:0 10px;border:none;border-radius:50%;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.25);z-index:2}',
-      '#bmg-lb .bmg-lb-nav[hidden]{display:none}',
-      '#bmg-lb .bmg-lb-nav svg{width:20px;height:20px}',
+      '#bmg-lb .bmg-lb-nav[hidden]{display:none!important}',
       '#bmg-lb .bmg-lb-thumbs{display:flex;justify-content:center;gap:8px;margin-top:10px}',
       '#bmg-lb .bmg-lb-thumbs[hidden]{display:none}',
       '#bmg-lb .bmg-lb-thumb{width:54px;height:40px;padding:0;border:2px solid rgba(255,255,255,.55);border-radius:8px;overflow:hidden;background:#fff;cursor:pointer;opacity:.75}',
@@ -192,20 +194,14 @@
     el.setAttribute('aria-label', 'Room photo');
     el.setAttribute('aria-hidden', 'true');
     el.innerHTML = ''
-      + '<button type="button" class="bmg-lb-nav bmg-lb-prev" aria-label="Foto anterior">'
-      + '<svg viewBox="0 0 24 24" fill="none" stroke="#1E1B4B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'
-      + '</button>'
+      + '<button type="button" class="bmg-lb-nav bmg-lb-prev" aria-label="Foto anterior"></button>'
       + '<div class="bmg-lb-wrap">'
       + '<img class="bmg-lb-img" src="" alt="Habitación">'
       + '<div class="bmg-lb-thumbs" hidden></div>'
       + '<div class="bmg-lb-name"></div>'
-      + '<button type="button" class="bmg-lb-close" aria-label="Cerrar">'
-      + '<svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
-      + '</button>'
+      + '<button type="button" class="bmg-lb-close" aria-label="Cerrar"></button>'
       + '</div>'
-      + '<button type="button" class="bmg-lb-nav bmg-lb-next" aria-label="Foto siguiente">'
-      + '<svg viewBox="0 0 24 24" fill="none" stroke="#1E1B4B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>'
-      + '</button>';
+      + '<button type="button" class="bmg-lb-nav bmg-lb-next" aria-label="Foto siguiente"></button>';
     document.body.appendChild(el);
     el.querySelector('.bmg-lb-close').addEventListener('click', function (e) {
       e.preventDefault();
