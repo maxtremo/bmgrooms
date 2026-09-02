@@ -72,11 +72,15 @@
       '#bmg-lb .bmg-lb-thumb img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}',
       '@media (max-width:600px){#bmg-lb .bmg-lb-nav{position:absolute;top:50%;margin:0;-webkit-transform:translateY(-50%);transform:translateY(-50%)}#bmg-lb .bmg-lb-prev{left:8px}#bmg-lb .bmg-lb-next{right:8px}#bmg-lb .bmg-lb-wrap{max-width:100%}}',
 
-      '.bmg-ficha-hero{display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"title price" "addr addr";gap:10px 20px;align-items:center;margin:0 0 18px!important;width:100%;}',
-      '.bmg-ficha-hero h1,.bmg-ficha-hero .elementor-heading-title{grid-area:title;margin:0!important;padding-right:8px!important;color:#262A45!important;line-height:1.2!important;align-self:center;}',
-      '.bmg-ficha-hero .bmg-live-price{grid-area:price;align-self:center!important;margin:0!important;padding:10px 16px!important;border-radius:12px!important;border:1px solid #00B8C4!important;background:#fff!important;box-shadow:0 2px 10px rgba(38,42,69,.12)!important;}',
-      '.bmg-ficha-hero .bmg-ficha-addr,.bmg-ficha-hero .bmg-ficha-addr *{grid-area:addr;color:#262A45!important;font-size:14px!important;font-weight:600!important;line-height:1.4!important;margin:0!important;opacity:1!important;}',
-      '@media (max-width:700px){.bmg-ficha-hero{grid-template-columns:1fr;grid-template-areas:"title" "price" "addr";}.bmg-ficha-hero .bmg-live-price{justify-self:start;}}',
+      '.bmg-ficha-title-row .jet-listing.display-inline{display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;align-items:center!important;gap:12px 20px!important;}',
+      '.bmg-ficha-title-row h1{margin:0!important;padding:0!important;color:#262A45!important;line-height:1.2!important;align-self:center!important;}',
+      '.bmg-ficha-price-slot{display:inline-flex!important;align-items:center!important;margin:0!important;padding:0!important;vertical-align:middle!important;}',
+      '.bmg-ficha-title-row .bmg-live-price,.bmg-ficha-price-slot .bmg-live-price{align-self:center!important;margin:0!important;padding:10px 16px!important;border-radius:12px!important;border:1px solid #00B8C4!important;background:#fff!important;box-shadow:0 2px 10px rgba(38,42,69,.12)!important;}',
+      '.bmg-ficha-title-row .bmg-live-price__amount{color:#1E3A8A!important;font-size:16px!important;font-weight:800!important;}',
+      '.bmg-ficha-title-row .bmg-live-price__contract{color:#00B8C4!important;font-size:12px!important;font-weight:700!important;opacity:1!important;}',
+      '.bmg-ficha-addr,.bmg-ficha-addr *{color:#262A45!important;font-size:15px!important;font-weight:600!important;line-height:1.4!important;opacity:1!important;}',
+      '.bmg-ficha-addr-col{width:100%!important;max-width:100%!important;flex:0 0 100%!important;}',
+      '.jet-woo-swiper-gallery-thumbs .jet-swiper-button-prev.swiper-button-disabled{opacity:0!important;pointer-events:none!important;}',
     ].join('');
     document.head.appendChild(s);
   }
@@ -360,22 +364,22 @@
     return null;
   }
   function layoutHero() {
-    var h1 = document.querySelector("h1");
+    var h1 = document.querySelector("h1.jet-listing-dynamic-field__content, h1");
     if (!h1 || h1.closest("#list-interior")) return;
+    var widget = h1.closest(".elementor-widget-jet-listing-dynamic-field, .jet-listing.display-inline");
+    if (widget) widget.classList.add("bmg-ficha-title-row");
+    var inj = document.querySelector(".bmg-ficha-injected.bmg-ficha-price");
+    if (inj && !inj.closest("#list-interior")) inj.classList.add("bmg-ficha-price-slot");
     var price = findHeroPrice();
-    var addr = findHeroAddr(h1);
-    if (!price && !addr) return;
-    var wrap = document.querySelector(".bmg-ficha-hero");
-    if (!wrap) {
-      wrap = document.createElement("div");
-      wrap.className = "bmg-ficha-hero";
-      h1.parentNode.insertBefore(wrap, h1);
+    if (price) {
+      var priceWidget = price.closest(".elementor-widget-jet-listing-dynamic-field, .jet-listing.display-inline");
+      if (priceWidget) priceWidget.classList.add("bmg-ficha-title-row");
     }
-    if (!wrap.contains(h1)) wrap.appendChild(h1);
-    if (price && !wrap.contains(price)) wrap.appendChild(price);
-    if (addr && !wrap.contains(addr)) {
+    var addr = findHeroAddr(h1);
+    if (addr) {
       addr.classList.add("bmg-ficha-addr");
-      wrap.appendChild(addr);
+      var col = addr.closest(".elementor-inner-column");
+      if (col) col.classList.add("bmg-ficha-addr-col");
     }
   }
   function watchList() {
