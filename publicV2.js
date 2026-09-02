@@ -463,9 +463,11 @@ function reorderHouses(countByKey) {
 }
 
 
+const PHOTO_BASE = 'https://maxtremo.github.io/bmgrooms/photos/';
+
 const HOUSE_COMUNES = {
-  xalisco: { src: 'photos/casa-xalisco-areas-1.jpg', label: 'Rooftop', alt: 'Rooftop Casa Xalisco' },
-  quetzal: { src: 'photos/casa-quetzal-areas-1.jpg', label: 'Sala de cine', alt: 'Sala de cine Casa Quetzal' }
+  xalisco: { src: PHOTO_BASE + 'casa-xalisco-areas-1.jpg', label: 'Rooftop', alt: 'Rooftop Casa Xalisco' },
+  quetzal: { src: PHOTO_BASE + 'casa-quetzal-areas-1.jpg', label: 'Sala de cine', alt: 'Sala de cine Casa Quetzal' }
 };
 
 function houseHeroHtml(casaKey) {
@@ -595,7 +597,7 @@ function wordpressGallery(casaKey, roomName) {
   const count = WORDPRESS_ROOM_GALLERY_COUNTS[house] && WORDPRESS_ROOM_GALLERY_COUNTS[house][room];
   if (!count) return [];
   return Array.from({ length: count }, (_, index) =>
-    `photos/casa-${house}-cuarto-${room}-${index + 1}-scaled.jpg`
+    PHOTO_BASE + `casa-${house}-cuarto-${room}-${index + 1}-scaled.jpg`
   );
 }
 
