@@ -70,7 +70,13 @@
       '#bmg-lb .bmg-lb-thumb{width:54px;height:40px;padding:0;border:2px solid rgba(255,255,255,.55);border-radius:8px;overflow:hidden;background:#fff;cursor:pointer;opacity:.75}',
       '#bmg-lb .bmg-lb-thumb.is-active{opacity:1;border-color:#00B8C4;-webkit-transform:scale(1.06);transform:scale(1.06)}',
       '#bmg-lb .bmg-lb-thumb img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}',
-      '@media (max-width:600px){#bmg-lb .bmg-lb-nav{position:absolute;top:50%;margin:0;-webkit-transform:translateY(-50%);transform:translateY(-50%)}#bmg-lb .bmg-lb-prev{left:8px}#bmg-lb .bmg-lb-next{right:8px}#bmg-lb .bmg-lb-wrap{max-width:100%}}'
+      '@media (max-width:600px){#bmg-lb .bmg-lb-nav{position:absolute;top:50%;margin:0;-webkit-transform:translateY(-50%);transform:translateY(-50%)}#bmg-lb .bmg-lb-prev{left:8px}#bmg-lb .bmg-lb-next{right:8px}#bmg-lb .bmg-lb-wrap{max-width:100%}}',
+
+      '.bmg-ficha-hero{display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"title price" "addr addr";gap:10px 20px;align-items:center;margin:0 0 18px!important;width:100%;}',
+      '.bmg-ficha-hero h1,.bmg-ficha-hero .elementor-heading-title{grid-area:title;margin:0!important;padding-right:8px!important;color:#262A45!important;line-height:1.2!important;align-self:center;}',
+      '.bmg-ficha-hero .bmg-live-price{grid-area:price;align-self:center!important;margin:0!important;padding:10px 16px!important;border-radius:12px!important;border:1px solid #00B8C4!important;background:#fff!important;box-shadow:0 2px 10px rgba(38,42,69,.12)!important;}',
+      '.bmg-ficha-hero .bmg-ficha-addr,.bmg-ficha-hero .bmg-ficha-addr *{grid-area:addr;color:#262A45!important;font-size:14px!important;font-weight:600!important;line-height:1.4!important;margin:0!important;opacity:1!important;}',
+      '@media (max-width:700px){.bmg-ficha-hero{grid-template-columns:1fr;grid-template-areas:"title" "price" "addr";}.bmg-ficha-hero .bmg-live-price{justify-self:start;}}',
     ].join('');
     document.head.appendChild(s);
   }
@@ -326,6 +332,52 @@
     });
     wrap.appendChild(bar);
   }
+
+  function findHeroPrice() {
+    var nodes = document.querySelectorAll(".bmg-live-price");
+    var i;
+    for (i = 0; i < nodes.length; i++) {
+      if (nodes[i].closest("#list-interior, .bmg-card, .room-card, .jet-listing-grid, footer")) continue;
+      return nodes[i];
+    }
+    return null;
+  }
+  function findHeroAddr(h1) {
+    var scope = (h1 && (h1.closest(".elementor-section, article, main, .site-main") || document.body));
+    var nodes = scope.querySelectorAll("p, span, div, .jet-listing-dynamic-field__content, .elementor-widget-text-editor, .elementor-heading-title");
+    var i;
+    for (i = 0; i < nodes.length; i++) {
+      var n = nodes[i];
+      if (n.closest("#list-interior, .bmg-card, nav, header, footer, #bmg-lb")) continue;
+      if (n.querySelector("h1, .bmg-live-price")) continue;
+      var tx = (n.textContent || "").replace(/\s+/g, " ").trim();
+      if (tx.length < 24 || tx.length > 180) continue;
+      if (!/Guadalajara|Col\.|Colonia|Zuno|Niños Héroes|Ninos Heroes/i.test(tx)) continue;
+      if (!/\d/.test(tx)) continue;
+      if (/MXN|month|contract|Bedroom|Bathroom/i.test(tx)) continue;
+      return n;
+    }
+    return null;
+  }
+  function layoutHero() {
+    var h1 = document.querySelector("h1");
+    if (!h1 || h1.closest("#list-interior")) return;
+    var price = findHeroPrice();
+    var addr = findHeroAddr(h1);
+    if (!price && !addr) return;
+    var wrap = document.querySelector(".bmg-ficha-hero");
+    if (!wrap) {
+      wrap = document.createElement("div");
+      wrap.className = "bmg-ficha-hero";
+      h1.parentNode.insertBefore(wrap, h1);
+    }
+    if (!wrap.contains(h1)) wrap.appendChild(h1);
+    if (price && !wrap.contains(price)) wrap.appendChild(price);
+    if (addr && !wrap.contains(addr)) {
+      addr.classList.add("bmg-ficha-addr");
+      wrap.appendChild(addr);
+    }
+  }
   function watchList() {
     if (listObserved || !window.MutationObserver) return;
     var list = document.getElementById('list-interior');
@@ -343,6 +395,7 @@
     var cards = document.querySelectorAll('.bmg-card, .room-card');
     var i;
     for (i = 0; i < cards.length; i++) applyCard(cards[i], house);
+    layoutHero();
   }
   if (!houseFromPage()) return;
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
