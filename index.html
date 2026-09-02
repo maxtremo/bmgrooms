@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="theme-color" content="#4F46E5" />
+<script>
+(function () {
+  var CACHE_MS = 86400000;
+  var LS_KEY = 'bmg_pub_cache_at';
+  var now = Date.now();
+  var params = new URLSearchParams(location.search);
+
+  if (params.has('_v')) {
+    try { localStorage.setItem(LS_KEY, String(now)); } catch (e) {}
+    window.BMG_PUB_ASSET_V = params.get('_v');
+    params.delete('_v');
+    var clean = location.pathname + (params.toString() ? '?' + params.toString() : '') + location.hash;
+    history.replaceState(null, '', clean);
+    return;
+  }
+
+  var last = 0;
+  try { last = parseInt(localStorage.getItem(LS_KEY) || '0', 10); } catch (e) {}
+  if (last && (now - last) >= CACHE_MS) {
+    try { localStorage.setItem(LS_KEY, String(now)); } catch (e) {}
+    params.set('_v', String(now));
+    location.replace(location.pathname + '?' + params.toString() + location.hash);
+    return;
+  }
+  if (!last) {
+    try { localStorage.setItem(LS_KEY, String(now)); } catch (e) {}
+  }
+  window.BMG_PUB_ASSET_V = String(Math.floor(now / CACHE_MS));
+})();
+</script>
+<script>
+(function () {
+  var v = window.BMG_PUB_ASSET_V || '0';
+  var linkTokens = document.createElement('link');
+  linkTokens.rel = 'stylesheet';
+  linkTokens.href = './tokens.css?v=' + encodeURIComponent(v);
+  document.head.appendChild(linkTokens);
+  var link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = './publicV2.css?v=' + encodeURIComponent(v);
+  document.head.appendChild(link);
+})();
+</script>
+<meta name="robots" content="index,follow">
+<meta name="googlebot" content="index,follow">
+<title>BMG Rooms · Disponibilidad</title>
+<meta name="description" content="Coliving para estudiantes y profesionistas en Guadalajara. Consulta disponibilidad de habitaciones en BMG Rooms.">
+<meta property="og:title" content="BMG Rooms - Coliving para Jovenes">
+<meta property="og:description" content="Coliving para estudiantes y profesionistas en Guadalajara. Habitaciones amuebladas con todos los servicios incluidos.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://bmgrooms.page.gd/">
+<meta property="og:image" content="https://housingbmg.com/wp-content/uploads/2020/02/Home-Cinema-4_nr-scaled.jpg">
+<link rel="canonical" href="https://bmgrooms.page.gd/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="BMG Rooms - Coliving para Jovenes">
+<meta name="twitter:description" content="Coliving para estudiantes y profesionistas en Guadalajara.">
+<meta name="twitter:image" content="https://housingbmg.com/wp-content/uploads/2020/02/Home-Cinema-4_nr-scaled.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Nunito:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ── Banner ── -->
+<div class="pub-banner">
+  <div class="shimmer"></div>
+  <div class="pub-banner-content">
+    <h1><a href="https://housingbmg.com">🏡 Be My Guest · HousingBMG.com</a></h1>
+    <p>Coliving para estudiantes y profesionistas en Guadalajara</p>
+  </div>
+</div>
+
+<!-- ── Body ── -->
+<div class="pub-body">
+  <p class="pub-date" id="pub-date-text">Actualizando…</p>
+
+  <div class="features-box">
+    <div class="features-title">¿Qué incluye tu renta?</div>
+    <div class="features-grid">
+      <div class="feature-item">🏠 Habitaciones amuebladas</div>
+      <div class="feature-item">🧼 Limpieza 3× semana</div>
+      <div class="feature-item">💡 Todos los servicios incluidos</div>
+      <div class="feature-item">💧 Filtro de agua para beber</div>
+      <div class="feature-item">🎬 Sala de cine</div>
+      <div class="feature-item">🔥 Calentador instantáneo</div>
+      <div class="feature-item">🌐 Internet de alta velocidad</div>
+      <div class="feature-item warn">❌ Sin estacionamiento</div>
+    </div>
+  </div>
+
+  <div class="filters-box" id="pub-filters">
+    <div class="filters-head">
+      <div class="filters-title">Filtrar habitaciones</div>
+      <button class="filters-clear" id="filters-clear" type="button">Limpiar</button>
+    </div>
+    <div class="filters-controls">
+      <button class="filter-chip-btn" id="filter-now" type="button" aria-pressed="false">Disponible ahora</button>
+      <button class="filter-chip-btn" id="filter-soon" type="button" aria-pressed="false">Próxima disponibilidad</button>
+      <button class="filter-chip-btn" id="filter-bath" type="button" aria-pressed="false">Baño privado / semiprivado</button>
+      <div class="filter-bed-wrap" aria-label="Tamaño de cama">
+        <button class="filter-chip-btn" type="button" data-bed="individual" aria-pressed="false">Cama individual</button>
+        <button class="filter-chip-btn" type="button" data-bed="matrimonial" aria-pressed="false">Cama matrimonial</button>
+        <button class="filter-chip-btn" type="button" data-bed="queen" aria-pressed="false">Cama queen</button>
+        <button class="filter-chip-btn" type="button" data-bed="king" aria-pressed="false">Cama king</button>
+      </div>
+    </div>
+    <div class="filters-meta" id="filters-meta" aria-live="polite">Mostrando…</div>
+  </div>
+
+  <!-- Accordion -->
+  <div class="accordion" id="accordion-wrap">
+
+    <!-- Casa Xalisco -->
+    <div class="acc-item open" id="acc-xalisco">
+      <div class="acc-trigger" id="acc-xalisco-trigger" role="button" tabindex="0" aria-expanded="true" aria-controls="acc-xalisco-body">
+        <div class="acc-trigger-icon">🏠</div>
+        <div class="acc-trigger-info">
+          <div class="acc-trigger-name" id="acc-xalisco-name">Casa Xalisco</div>
+          <div class="acc-trigger-addr" id="acc-xalisco-addr">Guadalupe Zuno 2024, Col. Americana</div>
+        </div>
+        <div class="acc-trigger-meta">
+          <a class="acc-map-link" href="https://maps.app.goo.gl/ciinzH5bD1tSLWNM8" target="_blank" rel="noopener" id="acc-xalisco-map" aria-label="Ver ubicación en Google Maps">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Ubicación</span>
+          </a>
+          <a class="acc-photos-link" href="https://drive.google.com/drive/folders/1hpMwSPZre1_8NfJ0klyFqm6sfacH6CzF" target="_blank" rel="noopener" id="acc-xalisco-photos">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Fotografías</span>
+          </a>
+          <span class="acc-count-badge" id="acc-xalisco-count">—</span>
+          <div class="acc-chevron">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="acc-body" id="acc-xalisco-body" role="region" aria-labelledby="acc-xalisco-name">
+        <div style="text-align:center;padding:24px;color:var(--text-soft);font-size:13px;">Cargando habitaciones…</div>
+      </div>
+    </div>
+
+    <!-- Casa Quetzal -->
+    <div class="acc-item open" id="acc-quetzal">
+      <div class="acc-trigger" id="acc-quetzal-trigger" role="button" tabindex="0" aria-expanded="true" aria-controls="acc-quetzal-body">
+        <div class="acc-trigger-icon">🏡</div>
+        <div class="acc-trigger-info">
+          <div class="acc-trigger-name" id="acc-quetzal-name">Casa Quetzal</div>
+          <div class="acc-trigger-addr" id="acc-quetzal-addr">Niños Héroes 1771-A, Col. Moderna</div>
+        </div>
+        <div class="acc-trigger-meta">
+          <a class="acc-map-link" href="https://maps.app.goo.gl/cC98RbSXkGifkMSF6" target="_blank" rel="noopener" id="acc-quetzal-map" aria-label="Ver ubicación en Google Maps">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Ubicación</span>
+          </a>
+          <a class="acc-photos-link" href="https://drive.google.com/drive/folders/1fyMS2cqq621lf4IicUx-9YYmgXrsH6CH" target="_blank" rel="noopener" id="acc-quetzal-photos">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Fotografías</span>
+          </a>
+          <span class="acc-count-badge" id="acc-quetzal-count">—</span>
+          <div class="acc-chevron">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="acc-body" id="acc-quetzal-body" role="region" aria-labelledby="acc-quetzal-name">
+        <div style="text-align:center;padding:24px;color:var(--text-soft);font-size:13px;">Cargando habitaciones…</div>
+      </div>
+    </div>
+
+  </div><!-- /accordion -->
+
+  <div class="wa-cta-wrap">
+    <a class="wa-big-btn" id="wa-big-footer" href="#" target="_blank" rel="noopener">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.855L0 24l6.335-1.508A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.804 9.804 0 01-5.032-1.393l-.36-.214-3.732.888.934-3.64-.234-.374A9.785 9.785 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+      Contactar a Hugo (+52 311 156 3904)
+    </a>
+  </div>
+
+  <footer class="pub-footer">
+    <div class="pub-footer-line">
+      <a class="pub-footer-link" href="https://housingbmg.com" target="_blank" rel="noopener">Housing BMG - Be My Guest</a>. Todos los derechos reservados 2026.
+    </div>
+    <div class="pub-footer-line">
+      Desarrollado con ❤️ por <a class="pub-footer-link" href="mailto:hugogarcialemus@gmail.com">Hugo Garlem</a>
+    </div>
+  </footer>
+</div>
+
+<!-- ── Lightbox ── -->
+<div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="Imagen de habitación" aria-hidden="true">
+  <div class="lightbox-img-wrap">
+    <img class="lightbox-img" id="lightbox-img" src="" alt="Habitación">
+    <div class="lightbox-name" id="lightbox-name"></div>
+    <button class="lightbox-close" id="lightbox-close" aria-label="Cerrar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ── Pre-Consulta Modal ── -->
+<div class="preconsulta-overlay" id="preconsulta-overlay" role="dialog" aria-modal="true" aria-label="Información antes de consultar" aria-hidden="true">
+  <!-- Botón cerrar FUERA del box — queda fijo en esquina superior derecha siempre visible -->
+  <button type="button" class="preconsulta-close" id="pc-close" aria-label="Cerrar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </button>
+  <div class="preconsulta-box">
+    <div class="preconsulta-title">¡Cuéntanos más de ti!</div>
+
+    <div class="preconsulta-field">
+      <label class="preconsulta-label">Nombre <span>*</span></label>
+      <input class="preconsulta-input" id="pc-nombre" type="text" autocomplete="name" placeholder="Tu nombre completo">
+    </div>
+
+    <div class="preconsulta-date-row">
+      <div class="preconsulta-field">
+        <label class="preconsulta-label">Edad <span>*</span></label>
+        <input class="preconsulta-input" id="pc-edad" type="number" inputmode="numeric" min="0" placeholder="Ej: 23">
+      </div>
+      <div class="preconsulta-field">
+        <label class="preconsulta-label">Profesionista / Estudiante <span>*</span></label>
+        <select class="preconsulta-select" id="pc-ocupacion">
+          <option value="">Selecciona una opción</option>
+          <option value="Profesionista">Profesionista</option>
+          <option value="Estudiante">Estudiante</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="preconsulta-field">
+      <label class="preconsulta-label">¿Por cuántos meses te interesa el contrato? <span>*</span></label>
+      <div class="preconsulta-options" id="pc-meses">
+        <button class="preconsulta-option" data-val="5">5 meses</button>
+        <button class="preconsulta-option" data-val="6">6 meses</button>
+      </div>
+      <div style="font-size: 11px; color: var(--text-soft); margin-top: 8px; font-weight: 600; text-align: center;">
+        Con posibilidad de renovación
+      </div>
+    </div>
+
+    <div class="preconsulta-field">
+      <label class="preconsulta-label">¿Cuándo te gustaría entrar? <span>*</span></label>
+      <div class="preconsulta-date-row">
+        <div class="preconsulta-field">
+          <select class="preconsulta-select" id="pc-mes-entrada">
+            <option value="">Mes</option>
+            <option value="Enero">Enero</option>
+            <option value="Febrero">Febrero</option>
+            <option value="Marzo">Marzo</option>
+            <option value="Abril">Abril</option>
+            <option value="Mayo">Mayo</option>
+            <option value="Junio">Junio</option>
+            <option value="Julio">Julio</option>
+            <option value="Agosto">Agosto</option>
+            <option value="Septiembre">Septiembre</option>
+            <option value="Octubre">Octubre</option>
+            <option value="Noviembre">Noviembre</option>
+            <option value="Diciembre">Diciembre</option>
+          </select>
+        </div>
+        <div class="preconsulta-field">
+          <select class="preconsulta-select" id="pc-dia-entrada">
+            <option value="">Día (opcional)</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+            <option value="24">24</option>
+            <option value="25">25</option>
+            <option value="26">26</option>
+            <option value="27">27</option>
+            <option value="28">28</option>
+            <option value="29">29</option>
+            <option value="30">30</option>
+            <option value="31">31</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="preconsulta-field">
+      <label class="preconsulta-label">Cuéntanos sobre ti (opcional)</label>
+      <textarea class="preconsulta-textarea" id="pc-descripcion" placeholder="Ej: Soy estudiante de medicina, me gusta el orden y la limpieza. Busco roomies tranquilos..."></textarea>
+    </div>
+
+    <!-- Info Toggles -->
+    <div class="preconsulta-info-row">
+      <button type="button" class="pc-info-btn" id="btn-show-req">
+        📋 Requisitos
+      </button>
+      <button type="button" class="pc-info-btn" id="btn-show-proc">
+        ⚡ Proceso
+      </button>
+    </div>
+
+    <div class="preconsulta-info-row visit">
+      <button type="button" class="pc-info-btn long" id="btn-show-visit">
+        🗓️ Agendar una visita
+      </button>
+    </div>
+
+    <!-- Requisitos Panel -->
+    <div class="pc-info-panel" id="panel-req">
+      <h4>Requisitos para rentar</h4>
+      <ul class="pc-info-list">
+        <li>1 mes de depósito para apartar tu habitación</li>
+        <li>Mes de renta al entrar</li>
+        <li>Identificación oficial (INE o Pasaporte)</li>
+        <li>Comprobante de ingresos / universidad</li>
+        <li>Firma de contrato (mínimo 5 meses)</li>
+      </ul>
+    </div>
+
+    <!-- Proceso Panel -->
+    <div class="pc-info-panel" id="panel-proc">
+      <h4>Pasos para confirmar tu reserva</h4>
+      <ul class="pc-info-list numbered">
+        <li><b>🪪 ID:</b> Necesitamos una foto de tu ID por ambos lados para generar tu contrato.</li>
+        <li><b>✍️ Firma:</b> Te enviaremos el contrato en digital para que lo revises y firmes.</li>
+        <li><b>✅ Confirmación:</b> Una vez firmado tu contrato y pagado tu depósito (1 mes), tu reserva estará confirmada.</li>
+      </ul>
+    </div>
+
+    <div class="pc-info-panel" id="panel-visit">
+      <div class="pc-visit-head">
+        <h4>Agendar una visita</h4>
+        <div class="pc-pill">Duración: ~30 min</div>
+      </div>
+      <div class="pc-visit-sub">Elige una fecha y un horario disponible (lun–sáb).<br> Horarios en hora de México (GMT-6).</div>
+
+      <div class="preconsulta-field">
+        <label class="preconsulta-label">Fecha <span>*</span></label>
+        <input class="preconsulta-input" id="pc-visit-fecha" type="date">
+      </div>
+
+      <div class="preconsulta-field">
+        <label class="preconsulta-label">Horario (Hora de México GMT-6) <span>*</span></label>
+        <div class="preconsulta-options" id="pc-visit-slots"></div>
+        <input id="pc-visit-horario" type="hidden" value="">
+      </div>
+    </div>
+
+    <div class="preconsulta-btns">
+      <button class="preconsulta-btn cancel" id="pc-cancel">Cancelar</button>
+      <button class="preconsulta-btn send" id="pc-send" disabled>Enviar por WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<div class="visitconfirm-overlay" id="visitconfirm-overlay" role="dialog" aria-modal="true" aria-label="Confirmación de visita agendada" aria-hidden="true">
+  <div class="visitconfirm-box">
+    <div class="visitconfirm-title">¡Visita agendada!</div>
+    <div class="visitconfirm-text">Nos pondremos en contacto contigo lo antes posible.</div>
+    <button class="visitconfirm-btn" id="visitconfirm-ok" type="button">Aceptar</button>
+  </div>
+</div>
+
+<!-- ── Firebase ── -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script>
+  window.BMG_VISIT_CAL = {
+    endpoint: "https://script.google.com/macros/s/AKfycby8dX7VB5JsyS25z_6xR0IFiLq-S6NcyzhpNY_8QRZjhzo6r2e-SZ7Ug_5bxh7qvTta/exec",
+    token: "visitas_bmg_2026_quetzalisco_9f3a"
+  };
+</script>
+<script>
+(function () {
+  var v = window.BMG_PUB_ASSET_V || '0';
+  var s = document.createElement('script');
+  s.src = './publicV2.js?v=' + encodeURIComponent(v);
+  document.body.appendChild(s);
+})();
+</script>
+</body>
+</html>
